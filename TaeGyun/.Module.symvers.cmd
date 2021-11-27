@@ -1,0 +1,1 @@
+cmd_/home/selgyun/Git/linux_term_project/TaeGyun/Module.symvers := sed 's/ko$$/o/' /home/selgyun/Git/linux_term_project/TaeGyun/modules.order | scripts/mod/modpost -m -a   -o /home/selgyun/Git/linux_term_project/TaeGyun/Module.symvers -e -i Module.symvers   -T -
