@@ -66,7 +66,7 @@ static int my_module_init(void)
 	
 	printk("------delete : 5------");
 	
-	my_list_del(&cur->entry, &cur->node);
+	//my_list_del(&cur->entry, &cur->node);
 	
 	my_list_for_each_entry(cur, &my_list, entry){
 		printk("%d",cur->key);
