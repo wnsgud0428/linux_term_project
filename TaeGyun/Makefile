@@ -1,7 +1,7 @@
 	#--------- Makefile ---------#
 obj-m := my_module.o
 
-KERNER_DIR := /lib/modules/5.10.70TaeGyunHan/build
+KERNER_DIR := /lib/modules/$(shell uname -r)/build
 PWD := $(shell pwd)
 
 default:
