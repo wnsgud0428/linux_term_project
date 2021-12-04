@@ -16,7 +16,7 @@
 #define DECLARE_LINKED_HASHTABLE(name, bits)                                   	\
 	struct hlist_head name[1 << (bits)]
 	
-#define my_hash_add(hashtable, node, key)						\
+#define my_list_hash_add(hashtable, node, key)						\
 	hlist_add_head(node, &hashtable[hash_min(key, HASH_BITS(hashtable))])
 	
 static inline void INIT_MY_LIST_HEAD(struct list_head *list)
@@ -55,10 +55,9 @@ static inline void __my_list_add(struct list_head *new,
 	WRITE_ONCE(prev->next, new);
 }
 	
-static inline void my_list_add(struct list_head *new, struct list_head *head, struct hlist_head *hashtable, struct hlist_node* node, int key)
+static inline void my_list_add(struct list_head *new, struct list_head *head)
 {
 	__my_list_add(new, head, head->next);
-	my_hash_add(hashtable, node, key);
 }
 
 static inline void MY_INIT_HLIST_NODE(struct hlist_node *h)
@@ -106,19 +105,17 @@ static inline void my_hlist_del_init(struct hlist_node *n)
 }
 
 
-static inline void my_hash_del(struct hlist_node *node)
+static inline void my_list_hash_del(struct hlist_node *node)
 {
 	my_hlist_del_init(node);
 }
 
 
-static inline void my_list_del(struct list_head *entry, struct hlist_node *node)
+static inline void my_list_del(struct list_head *entry)
 {
 	__my_list_del_entry(entry);
 	entry->next = LIST_POISON1;
 	entry->prev = LIST_POISON2;
-	
-	my_hash_del;
 }
 
 static inline void my_hlist_del(struct hlist_node *n)

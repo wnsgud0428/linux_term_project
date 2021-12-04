@@ -19,7 +19,8 @@ struct my_node{
 void insert(int value){
 	struct my_node *new = kmalloc(sizeof(struct my_node), GFP_KERNEL);
 	new->key = value;
-	my_list_add(&new->entry, &my_list, linked_hashtable, &new->node, value);
+	my_list_add(&new->entry, &my_list);
+	my_list_hash_add(linked_hashtable, &new->node, new->key);
 }
 
 struct my_node* search(int value){
@@ -32,7 +33,8 @@ struct my_node* search(int value){
 
 void delete(int value){
 	struct my_node *del = search(value);
-	my_list_del(&del->entry, &del->node);
+	my_list_del(&del->entry);
+	my_list_hash_del(&del->node);
 	kfree(del);
 }
 
@@ -66,7 +68,7 @@ static int my_module_init(void)
 	
 	printk("------delete : 5------");
 	
-	//my_list_del(&cur->entry, &cur->node);
+	delete(5);
 	
 	my_list_for_each_entry(cur, &my_list, entry){
 		printk("%d",cur->key);
