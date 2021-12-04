@@ -7,7 +7,7 @@
 
 static struct list_head my_list;
 
-DECLARE_HASHTABLE(linked_hashtable, 3);
+DECLARE_LINKED_HASHTABLE(linked_hashtable, 3);
 
 struct my_node{
 	struct list_head entry;
@@ -43,26 +43,30 @@ static int my_module_init(void)
 	
 	printk("my module init");
 	
-	INIT_LIST_HEAD(&my_list);
+	INIT_MY_LIST_HEAD(&my_list);
 	
 	insert(3);
 	insert(4);
 	insert(5);
 	insert(5);
 	insert(5);
+	insert(6);
 	
 	printk("------insert------");
 	
 	my_list_for_each_entry(cur, &my_list, entry){
 		printk("%d",cur->key);
 	}
+
+	struct my_node *tmp = search(5);
 	printk("------search : 5------");
-	//cur = search(5);
-	//printk("%d", cur->key);
-	
+	if (tmp != NULL)
+		printk("%d", tmp->key);
 	
 	printk("------delete : 5------");
-	delete(5);
+	
+	my_list_del(&cur->entry, &cur->node);
+	
 	my_list_for_each_entry(cur, &my_list, entry){
 		printk("%d",cur->key);
 	}
