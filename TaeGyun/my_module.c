@@ -58,10 +58,11 @@ static int my_module_init(void)
 		printk("%d",cur->key);
 	}
 
-	struct my_node *tmp = search(5);
+	struct my_node *tmp;
 	printk("------search : 5------");
-	if (tmp != NULL)
+	my_list_search(linked_hashtable, tmp, node, 5){
 		printk("%d", tmp->key);
+	}
 	
 	printk("------delete : 5------");
 	

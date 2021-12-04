@@ -8,8 +8,16 @@
 #include <linux/const.h>
 #include <linux/kernel.h>
 #include <linux/hashtable.h>
+#include <linux/hash.h>
+#include <linux/rculist.h>
 
 #define BUILD_BUG_ON_ZERO(e) (1)
+	
+#define DECLARE_LINKED_HASHTABLE(name, bits)                                   	\
+	struct hlist_head name[1 << (bits)]
+	
+#define my_hash_add(hashtable, node, key)						\
+	hlist_add_head(node, &hashtable[hash_min(key, HASH_BITS(hashtable))])
 	
 static inline void INIT_MY_LIST_HEAD(struct list_head *list)
 {
@@ -50,7 +58,7 @@ static inline void __my_list_add(struct list_head *new,
 static inline void my_list_add(struct list_head *new, struct list_head *head, struct hlist_head *hashtable, struct hlist_node* node, int key)
 {
 	__my_list_add(new, head, head->next);
-	hlist_add_head(node, &hashtable[hash_min(key, HASH_BITS(hashtable))]);
+	my_hash_add(hashtable, node, key);
 }
 
 static inline void MY_INIT_HLIST_NODE(struct hlist_node *h)
@@ -98,6 +106,11 @@ static inline void my_hlist_del_init(struct hlist_node *n)
 }
 
 
+static inline void my_hash_del(struct hlist_node *node)
+{
+	my_hlist_del_init(node);
+}
+
 
 static inline void my_list_del(struct list_head *entry, struct hlist_node *node)
 {
@@ -105,7 +118,7 @@ static inline void my_list_del(struct list_head *entry, struct hlist_node *node)
 	entry->next = LIST_POISON1;
 	entry->prev = LIST_POISON2;
 	
-	my_hlist_del_init(node);
+	my_hash_del;
 }
 
 static inline void my_hlist_del(struct hlist_node *n)
@@ -134,11 +147,9 @@ static inline void my_hlist_del(struct hlist_node *n)
 	     pos = my_list_next_entry(pos, member))
 	     
 
-#define my_list_search(hashtable, cur, node, value) \
-	my_hash_for_each_possible(hashtable, cur, node, value)
-	
-#define my_hash_for_each_possible(name, obj, member, key)			\
+#define my_list_search(name, obj, member, key) \
 	my_hlist_for_each_entry(obj, &name[hash_min(key, HASH_BITS(name))], member)
+	
 	
 #define my_hlist_for_each_entry(pos, head, member)				\
 	for (pos = my_hlist_entry_safe((head)->first, typeof(*(pos)), member);\
