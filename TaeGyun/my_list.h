@@ -12,11 +12,13 @@
 #include <linux/rculist.h>
 
 #define BUILD_BUG_ON_ZERO(e) (1)
-	
-#define DECLARE_LINKED_HASHTABLE(name, bits)                                   	\
+
+ // hashtable
+#define DECLARE_LINKED_HASHTABLE(name, bits) \
 	struct hlist_head name[1 << (bits)]
-	
-#define my_list_hash_add(hashtable, node, key)						\
+
+ // hashtable 
+#define my_list_hash_add(hashtable, node, key) \
 	hlist_add_head(node, &hashtable[hash_min(key, HASH_BITS(hashtable))])
 	
 static inline void INIT_MY_LIST_HEAD(struct list_head *list)
@@ -104,7 +106,7 @@ static inline void my_hlist_del_init(struct hlist_node *n)
 	}
 }
 
-
+ // hashtable 
 static inline void my_list_hash_del(struct hlist_node *node)
 {
 	my_hlist_del_init(node);
@@ -143,7 +145,7 @@ static inline void my_hlist_del(struct hlist_node *n)
 	     !list_entry_is_head(pos, head, member);			\
 	     pos = my_list_next_entry(pos, member))
 	     
-
+// hashtable 
 #define my_list_search(name, obj, member, key) \
 	my_hlist_for_each_entry(obj, &name[hash_min(key, HASH_BITS(name))], member)
 	
